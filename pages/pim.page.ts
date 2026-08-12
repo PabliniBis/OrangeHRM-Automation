@@ -11,6 +11,7 @@ export class PimPage {
   readonly employeeIdSearchInput: Locator;
   readonly searchButton: Locator;
   readonly employeeResultsTable: Locator;
+  readonly noRecordsFoundMessage: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -32,6 +33,7 @@ export class PimPage {
       .locator('input');
     this.searchButton = page.getByRole('button', { name: 'Search' });
     this.employeeResultsTable = page.locator('.oxd-table');
+    this.noRecordsFoundMessage = page.getByText('No Records Found', { exact: true });
   }
 
   async openAddEmployeeForm(): Promise<void> {

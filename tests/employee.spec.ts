@@ -59,3 +59,21 @@ test('should create a new employee', async ({
   await expect(employeeRow).toContainText(employeeData.firstName);
   await expect(employeeRow).toContainText(employeeData.lastName);
 });
+
+test('should show no records for a nonexistent employee', async ({ loginPage, dashboardPage, pimPage }) => {
+  const employeeData = generateEmployeeData();
+  const username = process.env.ORANGEHRM_USERNAME;
+  const password = process.env.ORANGEHRM_PASSWORD;
+
+  if (!username || !password) {
+    throw new Error('Please configure credentials in environment variables file.');
+  }
+
+  await loginPage.goto();
+  await loginPage.login(username, password);
+  await dashboardPage.navigateToPim();
+  await pimPage.searchEmployeeById(employeeData.employeeId);
+
+  await expect(pimPage.noRecordsFoundMessage).toBeVisible();
+  await expect(pimPage.page).toHaveURL(/\/web\/index\.php\/pim\/viewEmployeeList/);
+});
