@@ -47,4 +47,15 @@ test('should create a new employee', async ({
   await expect(employeeDetailsPage.firstNameInput).toHaveValue(employeeData.firstName);
   await expect(employeeDetailsPage.lastNameInput).toHaveValue(employeeData.lastName);
   await expect(employeeDetailsPage.employeeIdInput).toHaveValue(employeeData.employeeId);
+
+  await dashboardPage.navigateToPim();
+  await expect(pimPage.page).toHaveURL(/\/web\/index\.php\/pim\/viewEmployeeList/);
+
+  await pimPage.searchEmployeeById(employeeData.employeeId);
+  const employeeRow = pimPage.getEmployeeRowById(employeeData.employeeId);
+
+  await expect(employeeRow).toBeVisible();
+  await expect(employeeRow).toContainText(employeeData.employeeId);
+  await expect(employeeRow).toContainText(employeeData.firstName);
+  await expect(employeeRow).toContainText(employeeData.lastName);
 });
