@@ -1,7 +1,7 @@
 import { expect, test } from '../fixtures/app.fixture';
 import { generateEmployeeData } from '../utils/data-generator';
 
-test('should navigate to PIM employee list', async ({ loginPage, dashboardPage, pimPage }) => {
+test('should navigate to PIM employee list', { tag: ['@smoke', '@regression'] }, async ({ loginPage, dashboardPage, pimPage }) => {
   const username = process.env.ORANGEHRM_USERNAME;
   const password = process.env.ORANGEHRM_PASSWORD;
 
@@ -18,7 +18,7 @@ test('should navigate to PIM employee list', async ({ loginPage, dashboardPage, 
   await expect(pimPage.addEmployeeButton).toBeVisible();
 });
 
-test('should create a new employee', async ({
+test('should create a new employee', { tag: ['@e2e', '@regression'] }, async ({
   loginPage,
   dashboardPage,
   pimPage,
@@ -60,7 +60,7 @@ test('should create a new employee', async ({
   await expect(employeeRow).toContainText(employeeData.lastName);
 });
 
-test('should show no records for a nonexistent employee', async ({ loginPage, dashboardPage, pimPage }) => {
+test('should show no records for a nonexistent employee', { tag: ['@negative', '@regression'] }, async ({ loginPage, dashboardPage, pimPage }) => {
   const employeeData = generateEmployeeData();
   const username = process.env.ORANGEHRM_USERNAME;
   const password = process.env.ORANGEHRM_PASSWORD;
