@@ -36,7 +36,6 @@ The current tests cover login, logout, navigation to PIM, employee creation, emp
 ├── utils/
 │   └── data-generator.ts
 ├── .env.example
-├── AGENTS.md
 ├── package.json
 └── playwright.config.ts
 ```
