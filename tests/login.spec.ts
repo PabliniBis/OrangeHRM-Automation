@@ -32,3 +32,21 @@ test('should show required validation when credentials are empty', async ({ logi
   await expect(loginPage.passwordRequiredMessage).toBeVisible();
   await expect(loginPage.page).toHaveURL(/\/web\/index\.php\/auth\/login/);
 });
+
+test('should logout successfully', async ({ loginPage, dashboardPage }) => {
+  const username = process.env.ORANGEHRM_USERNAME;
+  const password = process.env.ORANGEHRM_PASSWORD;
+
+  if (!username || !password) {
+    throw new Error('Please configure credentials in environment variables file.');
+  }
+
+  await loginPage.goto();
+  await loginPage.login(username, password);
+  await expect(dashboardPage.dashboardHeading).toBeVisible();
+
+  await dashboardPage.logout();
+
+  await expect(loginPage.page).toHaveURL(/\/web\/index\.php\/auth\/login/);
+  await expect(loginPage.loginButton).toBeVisible();
+});

@@ -33,7 +33,11 @@ export class PimPage {
       .locator('input');
     this.searchButton = page.getByRole('button', { name: 'Search' });
     this.employeeResultsTable = page.locator('.oxd-table');
-    this.noRecordsFoundMessage = page.getByText('No Records Found', { exact: true });
+    // this.noRecordsFoundMessage = page.getByText('No Records Found', { exact: true });
+    // sometimes fails because of the toast notification. it duplicates the "No Records Found" text.
+    this.noRecordsFoundMessage = page
+      .locator('span.oxd-text--span')
+      .filter({ hasText: /^No Records Found$/ });
   }
 
   async openAddEmployeeForm(): Promise<void> {
