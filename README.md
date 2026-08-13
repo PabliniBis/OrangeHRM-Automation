@@ -1,5 +1,7 @@
 # OrangeHRM Playwright Automation
 
+[![Playwright Tests](https://github.com/PabliniBis/OrangeHRM-Automation/actions/workflows/playwright.yml/badge.svg?branch=main)](https://github.com/PabliniBis/OrangeHRM-Automation/actions/workflows/playwright.yml)
+
 ## Project Overview
 
 This project is based on the OrangeHRM demo application. It uses Playwright and TypeScript to test different functionalities in the platform.
@@ -16,6 +18,7 @@ The current tests cover login, logout, navigation to PIM, employee creation, emp
 * npm
 * dotenv
 * Chromium
+* GitHub Actions
 
 ## Project Structure
 
@@ -114,6 +117,26 @@ Open the HTML report:
 ```bash
 npm run report
 ```
+
+## CI/CD
+
+I added a GitHub Actions workflow to run the regression suite automatically on every push and pull request to the `main` branch.
+
+The workflow:
+
+- installs the project dependencies;
+- installs Chromium with the required system dependencies;
+- runs the regression tests;
+- uses GitHub Secrets for the environment values;
+- uploads the Playwright HTML report as an artifact even if the test execution fails.
+
+This gives the project a basic CI validation without depending on the local environment.
+
+For CI execution, the following values are stored as GitHub repository secrets:
+
+- `BASE_URL`
+- `ORANGEHRM_USERNAME`
+- `ORANGEHRM_PASSWORD`
 
 ## Test Scenarios
 
@@ -269,4 +292,4 @@ I used Playwright auto-waiting and web-first assertions instead, and when a test
 * Unique Employee IDs reduce the possibility of collisions between executions.
 * The tests are designed not to depend on execution order.
 * The project currently runs on Chromium.
-* CI/CD has not been added yet.
+* GitHub Actions currently runs the regression suite on Chromium.
