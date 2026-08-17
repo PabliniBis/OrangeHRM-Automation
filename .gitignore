@@ -2,7 +2,6 @@
 # Playwright
 node_modules/
 .env
-AGENTS.md
 /test-results/
 /playwright-report/
 /blob-report/
