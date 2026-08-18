@@ -1,79 +1,173 @@
 import { expect, test } from '../fixtures/app.fixture';
 import { generateEmployeeData } from '../utils/data-generator';
 
-test('should navigate to PIM employee list', { tag: ['@smoke', '@regression'] }, async ({ loginPage, dashboardPage, pimPage }) => {
-  const username = process.env.ORANGEHRM_USERNAME;
-  const password = process.env.ORANGEHRM_PASSWORD;
+test(
+  'should navigate to PIM employee list',
+  { tag: ['@smoke', '@regression'] },
+  async ({ loginPage, dashboardPage, pimPage }) => {
+    const username = process.env.ORANGEHRM_USERNAME;
+    const password = process.env.ORANGEHRM_PASSWORD;
 
-  if (!username || !password) {
-    throw new Error('Please configure credentials in environment variables file.');
-  }
+    if (!username || !password) {
+      throw new Error('Please configure credentials in environment variables file.');
+    }
 
-  await loginPage.goto();
-  await loginPage.login(username, password);
-  await dashboardPage.navigateToPim();
+    await loginPage.goto();
+    await loginPage.login(username, password);
+    await dashboardPage.navigateToPim();
 
-  await expect(pimPage.page).toHaveURL(/\/web\/index\.php\/pim\/viewEmployeeList/);
-  await expect(pimPage.pimHeading).toBeVisible();
-  await expect(pimPage.addEmployeeButton).toBeVisible();
-});
+    await expect(pimPage.page).toHaveURL(/\/web\/index\.php\/pim\/viewEmployeeList/);
+    await expect(pimPage.pimHeading).toBeVisible();
+    await expect(pimPage.addEmployeeButton).toBeVisible();
+  });
 
-test('should create a new employee', { tag: ['@e2e', '@regression'] }, async ({
-  loginPage,
-  dashboardPage,
-  pimPage,
-  employeeDetailsPage,
-}) => {
-  const employeeData = generateEmployeeData();
-  const username = process.env.ORANGEHRM_USERNAME;
-  const password = process.env.ORANGEHRM_PASSWORD;
+test(
+  'should create a new employee',
+  { tag: ['@e2e', '@regression'] },
+  async ({
+    loginPage,
+    dashboardPage,
+    pimPage,
+    employeeDetailsPage,
+  }) => {
+    const employeeData = generateEmployeeData();
+    const username = process.env.ORANGEHRM_USERNAME;
+    const password = process.env.ORANGEHRM_PASSWORD;
 
-  if (!username || !password) {
-    throw new Error('Please configure credentials in environment variables file.');
-  }
+    if (!username || !password) {
+      throw new Error('Please configure credentials in environment variables file.');
+    }
 
-  await loginPage.goto();
-  await loginPage.login(username, password);
-  await dashboardPage.navigateToPim();
-  await pimPage.openAddEmployeeForm();
-  await pimPage.addEmployee(
-    employeeData.firstName,
-    employeeData.lastName,
-    employeeData.employeeId,
-  );
+    await loginPage.goto();
+    await loginPage.login(username, password);
+    await dashboardPage.navigateToPim();
+    await pimPage.openAddEmployeeForm();
+    await pimPage.addEmployee(
+      employeeData.firstName,
+      employeeData.lastName,
+      employeeData.employeeId,
+    );
 
-  await expect(pimPage.page).toHaveURL(/\/web\/index\.php\/pim\/viewPersonalDetails/);
-  await expect(employeeDetailsPage.personalDetailsHeading).toBeVisible();
-  await expect(employeeDetailsPage.firstNameInput).toHaveValue(employeeData.firstName);
-  await expect(employeeDetailsPage.lastNameInput).toHaveValue(employeeData.lastName);
-  await expect(employeeDetailsPage.employeeIdInput).toHaveValue(employeeData.employeeId);
+    await expect(pimPage.page).toHaveURL(/\/web\/index\.php\/pim\/viewPersonalDetails/);
+    await expect(employeeDetailsPage.personalDetailsHeading).toBeVisible();
+    await expect(employeeDetailsPage.firstNameInput).toHaveValue(employeeData.firstName);
+    await expect(employeeDetailsPage.lastNameInput).toHaveValue(employeeData.lastName);
+    await expect(employeeDetailsPage.employeeIdInput).toHaveValue(employeeData.employeeId);
 
-  await dashboardPage.navigateToPim();
-  await expect(pimPage.page).toHaveURL(/\/web\/index\.php\/pim\/viewEmployeeList/);
+    await dashboardPage.navigateToPim();
+    await expect(pimPage.page).toHaveURL(/\/web\/index\.php\/pim\/viewEmployeeList/);
 
-  await pimPage.searchEmployeeById(employeeData.employeeId);
-  const employeeRow = pimPage.getEmployeeRowById(employeeData.employeeId);
+    await pimPage.searchEmployeeById(employeeData.employeeId);
+    const employeeRow = pimPage.getEmployeeRowById(employeeData.employeeId);
 
-  await expect(employeeRow).toBeVisible();
-  await expect(employeeRow).toContainText(employeeData.employeeId);
-  await expect(employeeRow).toContainText(employeeData.firstName);
-  await expect(employeeRow).toContainText(employeeData.lastName);
-});
+    await expect(employeeRow).toBeVisible();
+    await expect(employeeRow).toContainText(employeeData.employeeId);
+    await expect(employeeRow).toContainText(employeeData.firstName);
+    await expect(employeeRow).toContainText(employeeData.lastName);
+  });
 
-test('should show no records for a nonexistent employee', { tag: ['@negative', '@regression'] }, async ({ loginPage, dashboardPage, pimPage }) => {
-  const employeeData = generateEmployeeData();
-  const username = process.env.ORANGEHRM_USERNAME;
-  const password = process.env.ORANGEHRM_PASSWORD;
+test(
+  'should update an existing employee',
+  { tag: ['@e2e', '@regression'] },
+  async ({
+    loginPage,
+    dashboardPage,
+    pimPage,
+    employeeDetailsPage,
+  }) => {
+    const employeeData = generateEmployeeData();
+    const updatedFirstName = 'Updated';
+    const updatedLastName = `${employeeData.lastName}Updated`;
 
-  if (!username || !password) {
-    throw new Error('Please configure credentials in environment variables file.');
-  }
+    const username = process.env.ORANGEHRM_USERNAME;
+    const password = process.env.ORANGEHRM_PASSWORD;
 
-  await loginPage.goto();
-  await loginPage.login(username, password);
-  await dashboardPage.navigateToPim();
-  await pimPage.searchEmployeeById(employeeData.employeeId);
+    if (!username || !password) {
+      throw new Error('Please configure credentials in environment variables file.');
+    }
 
-  await expect(pimPage.noRecordsFoundMessage).toBeVisible();
-  await expect(pimPage.page).toHaveURL(/\/web\/index\.php\/pim\/viewEmployeeList/);
-});
+    await loginPage.goto();
+    await loginPage.login(username, password);
+    await dashboardPage.navigateToPim();
+    await pimPage.openAddEmployeeForm();
+    await pimPage.addEmployee(
+      employeeData.firstName,
+      employeeData.lastName,
+      employeeData.employeeId,
+    );
+
+    await expect(pimPage.page).toHaveURL(/\/web\/index\.php\/pim\/viewPersonalDetails/);
+    await expect(employeeDetailsPage.personalDetailsHeading).toBeVisible();
+    await expect(employeeDetailsPage.firstNameInput).toHaveValue(employeeData.firstName);
+    await expect(employeeDetailsPage.lastNameInput).toHaveValue(employeeData.lastName);
+    await expect(employeeDetailsPage.employeeIdInput).toHaveValue(employeeData.employeeId);
+
+    await employeeDetailsPage.updateEmployeeName(updatedFirstName, updatedLastName,);
+
+    await employeeDetailsPage.page.reload();
+    await expect(employeeDetailsPage.personalDetailsHeading).toBeVisible();
+
+    await expect(employeeDetailsPage.firstNameInput).toHaveValue(updatedFirstName);
+    await expect(employeeDetailsPage.lastNameInput).toHaveValue(updatedLastName);
+    await expect(employeeDetailsPage.employeeIdInput).toHaveValue(employeeData.employeeId);
+  },
+);
+
+test(
+  'should show no records for a nonexistent employee',
+  { tag: ['@negative', '@regression'] },
+  async ({ loginPage, dashboardPage, pimPage }) => {
+    const employeeData = generateEmployeeData();
+    const username = process.env.ORANGEHRM_USERNAME;
+    const password = process.env.ORANGEHRM_PASSWORD;
+
+    if (!username || !password) {
+      throw new Error('Please configure credentials in environment variables file.');
+    }
+
+    await loginPage.goto();
+    await loginPage.login(username, password);
+    await dashboardPage.navigateToPim();
+    await pimPage.searchEmployeeById(employeeData.employeeId);
+
+    await expect(pimPage.noRecordsFoundMessage).toBeVisible();
+    await expect(pimPage.page).toHaveURL(/\/web\/index\.php\/pim\/viewEmployeeList/);
+  });
+
+test(
+  'should delete an existing employee',
+  { tag: ['@e2e', '@regression'] },
+  async ({ loginPage, dashboardPage, pimPage, employeeDetailsPage }) => {
+    const employeeData = generateEmployeeData();
+    const username = process.env.ORANGEHRM_USERNAME;
+    const password = process.env.ORANGEHRM_PASSWORD;
+
+    if (!username || !password) {
+      throw new Error('Please configure credentials in environment variables file.');
+    }
+
+    await loginPage.goto();
+    await loginPage.login(username, password);
+    await dashboardPage.navigateToPim();
+    await pimPage.openAddEmployeeForm();
+    await pimPage.addEmployee(
+      employeeData.firstName,
+      employeeData.lastName,
+      employeeData.employeeId,
+    );
+
+    await expect(pimPage.page).toHaveURL(/\/web\/index\.php\/pim\/viewPersonalDetails/);
+    await expect(employeeDetailsPage.personalDetailsHeading).toBeVisible();
+
+    await dashboardPage.navigateToPim();
+    await expect(pimPage.page).toHaveURL(/\/web\/index\.php\/pim\/viewEmployeeList/);
+
+    await pimPage.searchEmployeeById(employeeData.employeeId);
+    const employeeRow = pimPage.getEmployeeRowById(employeeData.employeeId);
+
+    await expect(employeeRow).toBeVisible();
+    await pimPage.deleteEmployeeById(employeeData.employeeId);
+
+    await pimPage.searchEmployeeById(employeeData.employeeId);
+    await expect(pimPage.noRecordsFoundMessage).toBeVisible();
+  });

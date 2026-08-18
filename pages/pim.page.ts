@@ -12,6 +12,7 @@ export class PimPage {
   readonly searchButton: Locator;
   readonly employeeResultsTable: Locator;
   readonly noRecordsFoundMessage: Locator;
+  readonly deleteConfirmationButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -38,6 +39,7 @@ export class PimPage {
     this.noRecordsFoundMessage = page
       .locator('span.oxd-text--span')
       .filter({ hasText: /^No Records Found$/ });
+    this.deleteConfirmationButton = page.getByRole('button', { name: 'Yes, Delete' });
   }
 
   async openAddEmployeeForm(): Promise<void> {
@@ -62,5 +64,16 @@ export class PimPage {
     return this.employeeResultsTable
       .locator('.oxd-table-row')
       .filter({ has: this.page.getByText(employeeId, { exact: true }) });
+  }
+
+  async deleteEmployeeById(employeeId: string): Promise<void> {
+    const employeeRow = this.getEmployeeRowById(employeeId);
+
+    const deleteButton = employeeRow
+      .locator('button')
+      .filter({ has: this.page.locator('i.bi-trash') });
+
+    await deleteButton.click();
+    await this.deleteConfirmationButton.click();
   }
 }

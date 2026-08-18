@@ -6,6 +6,7 @@ export class EmployeeDetailsPage {
   readonly lastNameInput: Locator;
   readonly employeeIdInput: Locator;
   readonly personalDetailsHeading: Locator;
+  readonly saveButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -18,5 +19,17 @@ export class EmployeeDetailsPage {
       .filter({ has: page.getByText('Employee Id', { exact: true }) })
       .locator('input');
     this.personalDetailsHeading = page.getByRole('heading', { name: 'Personal Details' });
+    this.saveButton = page
+      .locator('.orangehrm-edit-employee-content > .orangehrm-horizontal-padding')
+      .filter({ has: this.personalDetailsHeading })
+      .getByRole('button', { name: 'Save' });
+  }
+
+  async updateEmployeeName(firstName: string, lastName: string): Promise<void> {
+    await this.firstNameInput.clear();
+    await this.firstNameInput.fill(firstName);
+    await this.lastNameInput.clear();
+    await this.lastNameInput.fill(lastName);
+    await this.saveButton.click();
   }
 }
